@@ -6,10 +6,6 @@ import PIL
 import pika
 import hashlib
 
-# 
-# Adapted from Dirk Grunwald
-#
-
 hostname= os.environ['RABBIT_HOST'] \
           if 'RABBIT_HOST' in os.environ else 'rabbitmq-server.local'
 connection = pika.BlockingConnection(pika.ConnectionParameters(host=hostname))

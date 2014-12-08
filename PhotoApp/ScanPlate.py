@@ -2,10 +2,6 @@ import sys
 import subprocess
 import json
 
-# 
-# Adapted from Dirk Grunwald
-#
-
 def getLikelyLicense(filename, threshold = 85.0, debug=False):
     try:
         proc = subprocess.Popen(['/usr/bin/alpr',

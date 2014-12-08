@@ -2,10 +2,6 @@ import sys,os
 import requests
 import json
 
-# 
-# Adapted from Dirk Grunwald
-#
-
 filename = sys.argv[1]
 fd = open(filename, 'rb')
 

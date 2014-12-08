@@ -4,10 +4,6 @@ import PIL
 import pika
 import md5
 
-# 
-# Adapted from Dirk Grunwald
-#
-
 hostname= os.environ['RABBIT_HOST'] if 'RABBIT_HOST' in os.environ else 'rabbitmq-server.local'
 
 if len(sys.argv) < 2:
