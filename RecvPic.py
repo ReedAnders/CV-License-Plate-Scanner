@@ -39,7 +39,7 @@ def photoInfo(pickled):
     print "Wrote it to ", newPhotoName
     print "License:", ScanPlate.getLikelyLicense( newPhotoName )
     print "GeoTag:", GetLatLon.getLatLon( newPhotoName )
-    os.remove(newPhotoName)
+    # os.remove(newPhotoName)
 
     # Check redis checksum 
     checksumKey = str(unpickled[1])
@@ -48,7 +48,7 @@ def photoInfo(pickled):
     else:
         scanList = ScanPlate.getLikelyLicense( newPhotoName )
         for ii in reversed(scanList):
-            redisByChecksum.lpop(checksumKey, ii[0])
+            redisByChecksum.lpush(checksumKey, ii[0])
             print "Added (key, value) pair (%s, %s)" % (checksumKey, ii[0])
 
     # Check redis by file name
@@ -58,9 +58,10 @@ def photoInfo(pickled):
     else:
         scanList = ScanPlate.getLikelyLicense( newPhotoName )
         for ii in reversed(scanList):
-            redisByName.lpop(checkName, ii[0])
+            redisByName.lpush(checkName, ii[0])
             print "Added (key, value) pair (%s, %s)" % (checkName, ii[0])
 
+    os.remove(newPhotoName)
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
         host=hostname))
