@@ -76,7 +76,14 @@ def scan():
 
 @app.route("/check-by-md5/<checksum>")
 def check_by_md5(checksum):
-    print "Checksum is ", checksum
+
+    redisByChecksum = redis.Redis(host='redis-server.local', db=1)
+    checksumKey = str(checksum)
+    checksumList = []
+
+    for ii in range(redisByChecksum.llen(checksumKey)):
+        checksumList.append( redisByChecksum.lindex(checksumKey, ii) )
+    print "Checksum is ", checksumList
         
 @app.route("/check-by-name/<filename>")
 def check_by_name(filename):
