@@ -5,6 +5,9 @@ import GetLatLon
 import tempfile
 import PIL
 import pika
+import redis
+
+# Modified to report the image contacts to the REDIS database
 
 def imageType(filename):
     try:
@@ -17,7 +20,14 @@ hostname= os.environ['RABBIT_HOST'] if 'RABBIT_HOST' in os.environ else 'rabbitm
 
 def photoInfo(pickled):
     #
-    # You can print it out, but it is very long
+    # Add redis key/value for redisByChecksum and redisByName
+    # 
+
+    redisByChecksum = redis.Redis(host='redis-server.local', db=1)
+    redisByName = redis.Redis(host='redis-server.local', db=2)
+    # redisMD5ByLicense = redis.Redis(host='redis-server.local', db=3)
+    # redisNameByLicense = redis.Redis(host='redis-server.local', db=4)
+
     print "pickled item is ", len(pickled),"bytes"
     unpickled = pickle.loads(pickled)
     print "File name was", unpickled[0], "digest is ", unpickled[1]
@@ -30,6 +40,27 @@ def photoInfo(pickled):
     print "License:", ScanPlate.getLikelyLicense( newPhotoName )
     print "GeoTag:", GetLatLon.getLatLon( newPhotoName )
     os.remove(newPhotoName)
+
+    # Check redis checksum 
+    checksumKey = str(unpickled[1])
+    if redisByChecksum.exists(checksumKey):
+        print "Existing Redis checksum entry at key: '%s' " % (checksumKey)
+    else:
+        scanList = ScanPlate.getLikelyLicense( newPhotoName )
+        for ii in reversed(scanList):
+            redisByChecksum.lpop(checksumKey, ii[0])
+            print "Added (key, value) pair (%s, %s)" % (checksumKey, ii[0])
+
+    # Check redis by file name
+    checkName = str(newPhotoName)
+    if redisByName.exists(checkName):
+        print "Existing Redis name entry at key: '%s' " % (checkName)
+    else:
+        scanList = ScanPlate.getLikelyLicense( newPhotoName )
+        for ii in reversed(scanList):
+            redisByName.lpop(checkName, ii[0])
+            print "Added (key, value) pair (%s, %s)" % (checkName, ii[0])
+
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
         host=hostname))

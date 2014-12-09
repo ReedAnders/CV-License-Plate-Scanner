@@ -12,6 +12,8 @@ import PIL
 import pika
 import hashlib
 
+# Should accept photos and answer the '/check-by-...' REST calls documented at bottom
+
 hostname= os.environ['RABBIT_HOST'] \
           if 'RABBIT_HOST' in os.environ else 'rabbitmq-server.local'
 connection = pika.BlockingConnection(pika.ConnectionParameters(host=hostname))
@@ -36,7 +38,7 @@ def hello():
 
 ##
 ## This web service accepts an image file
-## and 
+##  
 @app.route("/scan", methods=['POST', 'GET'])
 def scan():
     if request.method == 'POST':
