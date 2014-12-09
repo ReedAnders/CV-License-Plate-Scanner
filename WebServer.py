@@ -78,19 +78,51 @@ def scan():
 def check_by_md5(checksum):
 
     redisByChecksum = redis.Redis(host='redis-server.local', db=1)
-    checksumKey = str(checksum)
-    checksumList = []
 
-    for ii in range(redisByChecksum.llen(checksumKey)):
-        checksumList.append( redisByChecksum.lindex(checksumKey, ii) )
-    print "Checksum is ", checksumList
+    key = str(checksum)
+    resultList = []
+
+    for ii in range(redisByChecksum.llen(key)):
+        resultList.append( redisByChecksum.lindex(key, ii) )
+    print "Checksum is ", resultList
         
 @app.route("/check-by-name/<filename>")
 def check_by_name(filename):
-    print "Filename is ", filename
+
+    redisByName = redis.Redis(host='redis-server.local', db=2)
+
+    key = str(filename)
+    resultList = []
+
+    for ii in range(redisByName.llen(key)):
+        resultList.append( redisByName.lindex(key, ii) )
+    print "Filename is ", resultList
         
 
+@app.route("/name-by-license/<license>")
+def name-by-license(license):
 
+    redisNameByLicense = redis.Redis(host='redis-server.local', db=4)
+
+    key = str(license)
+    resultList = []
+
+    for ii in range(redisNameByLicense.llen(key)):
+        resultList.append( redisNameByLicense.lindex(key, ii) )
+    print "License is ", resultList
+
+
+@app.route("/md5-by-licenses/<license>")
+def md5-by-licenses(license):
+
+    redisMD5ByLicense = redis.Redis(host='redis-server.local', db=3)
+
+    key = str(license)
+    resultList = []
+
+    for ii in range(redisMD5ByLicense.llen(key)):
+        resultList.append( redisMD5ByLicense.lindex(key, ii) )
+    print "License is ", resultList
 
 #server = wsgi.WSGIServer(('0.0.0.0', 8080), app)
 #server.serve_forever()

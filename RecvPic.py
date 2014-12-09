@@ -25,8 +25,8 @@ def photoInfo(pickled):
 
     redisByChecksum = redis.Redis(host='redis-server.local', db=1)
     redisByName = redis.Redis(host='redis-server.local', db=2)
-    # redisMD5ByLicense = redis.Redis(host='redis-server.local', db=3)
-    # redisNameByLicense = redis.Redis(host='redis-server.local', db=4)
+    redisMD5ByLicense = redis.Redis(host='redis-server.local', db=3)
+    redisNameByLicense = redis.Redis(host='redis-server.local', db=4)
 
     print "pickled item is ", len(pickled),"bytes"
     unpickled = pickle.loads(pickled)
