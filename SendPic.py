@@ -3,6 +3,7 @@ import pickle
 import PIL
 import pika
 import md5
+import hashlib
 
 hostname= os.environ['RABBIT_HOST'] if 'RABBIT_HOST' in os.environ else 'rabbitmq-server.local'
 
