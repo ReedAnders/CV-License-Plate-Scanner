@@ -2,7 +2,7 @@ import sys
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 
-# 
+#
 # Sample code from: https://gist.github.com/moshekaplan/5330395
 #
  

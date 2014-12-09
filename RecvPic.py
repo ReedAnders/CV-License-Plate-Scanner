@@ -6,10 +6,6 @@ import tempfile
 import PIL
 import pika
 
-# 
-# Adapted from Dirk Grunwald
-#
-
 def imageType(filename):
     try:
         i=PIL.Image.open(filename)

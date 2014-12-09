@@ -1,14 +1,16 @@
 import os
+
+#from gevent import monkey
+#monkey.patch_all()
+from flask import Flask
+#from gevent import wsgi
+
 from flask import Flask, request, redirect, url_for
 from werkzeug import secure_filename
 import pickle
 import PIL
 import pika
 import hashlib
-
-# 
-# Adapted from Dirk Grunwald
-#
 
 hostname= os.environ['RABBIT_HOST'] \
           if 'RABBIT_HOST' in os.environ else 'rabbitmq-server.local'
@@ -32,6 +34,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def hello():
     return "Hello World!"
 
+##
+## This web service accepts an image file
+## and 
 @app.route("/scan", methods=['POST', 'GET'])
 def scan():
     if request.method == 'POST':
@@ -65,6 +70,21 @@ def scan():
             return '{"digest":"%s"}' % (digest)
         else:
             abort(403)
+
+
+@app.route("/check-by-md5/<checksum>")
+def check_by_md5(checksum):
+    print "Checksum is ", checksum
+        
+@app.route("/check-by-name/<filename>")
+def check_by_name(filename):
+    print "Filename is ", filename
+        
+
+
+
+#server = wsgi.WSGIServer(('0.0.0.0', 8080), app)
+#server.serve_forever()
 
 if __name__ == "__main__":
     app.debug = True
