@@ -41,12 +41,14 @@ def photoInfo(pickled):
     print "GeoTag:", GetLatLon.getLatLon( newPhotoName )
     # os.remove(newPhotoName)
 
+    scanList = ScanPlate.getLikelyLicense( newPhotoName )
+
     # Check redis checksum 
     checksumKey = str(unpickled[1])
     if redisByChecksum.exists(checksumKey):
         print "Existing Redis checksum entry at key: '%s' " % (checksumKey)
     else:
-        scanList = ScanPlate.getLikelyLicense( newPhotoName )
+        # scanList = ScanPlate.getLikelyLicense( newPhotoName )
         for ii in reversed(scanList):
             redisByChecksum.lpush(checksumKey, ii[0])
             print "Added (key, value) pair (%s, %s)" % (checksumKey, ii[0])
@@ -56,10 +58,30 @@ def photoInfo(pickled):
     if redisByName.exists(checkName):
         print "Existing Redis name entry at key: '%s' " % (checkName)
     else:
-        scanList = ScanPlate.getLikelyLicense( newPhotoName )
+        # scanList = ScanPlate.getLikelyLicense( newPhotoName )
         for ii in reversed(scanList):
             redisByName.lpush(checkName, ii[0])
             print "Added (key, value) pair (%s, %s)" % (checkName, ii[0])
+
+    # Check MD5 By License
+    for ii in scanList:
+
+        checksumValue = str(unpickled[1])
+        if redisMD5ByLicense.exists(ii[0]):
+            print "Existing MD5ByLicense entry at key: '%s' " % (ii[0])
+        else:
+            redisMD5ByLicense.lpush(ii[0], checksumValue)
+            print "Added (key, value) pair (%s, %s)" % (checksumValue, ii[0])
+
+    # Check Name By License
+    for ii in scanList:
+
+        checkNameValue = str(newPhotoName)
+        if redisMD5ByLicense.exists(ii[0]):
+            print "Existing NameByLicense entry at key: '%s' " % (ii[0])
+        else:
+            redisMD5ByLicense.lpush(ii[0], checkNameValue)
+            print "Added (key, value) pair (%s, %s)" % (checkNameValue, ii[0])
 
     os.remove(newPhotoName)
 
